@@ -5,13 +5,31 @@
 #include <pthread.h>
 
 
+
 struct Data {
     std::vector<char> letters; //stores each letter in message
     std::vector<int> frequency; //stores frequency of each letter in message
     std::vector<int> shannon; //stores shannon code for each letter in message
     std::string line; //message
     std::string encoded;
+
+    std::vector<char> orderedLetters; //stores each letter in message, ordered by frequency 
+    std::vector<int> orderedFrequency; //stores frequency of each letter in message, ordered by frequency 
+    std::vector<int> orderedShannon; //stores shannon code for each letter in message, ordered by frequency 
+
 };
+
+
+void inOrder(std::vector<char>& orderedL, std::vector<int>& orderedF) {
+    for( int i = 0; i < orderedF.size(); i++) {
+        for( int j = i + 1; j < orderedF.size(); j++) {
+            if(orderedF[j] > orderedF[i]) {
+                std::swap(orderedF[i], orderedF[j]);
+                std::swap(orderedL[i], orderedL[j]);
+            }
+        }
+    }
+}
 
 
 void* freq(void* void_ptr) {
@@ -36,7 +54,6 @@ void* freq(void* void_ptr) {
             }
         }
 
-
         if(!isDupe) {
             int count = 0; 
             for(int j = 0; j < ptr->letters.size(); j++) {
@@ -48,6 +65,17 @@ void* freq(void* void_ptr) {
         }
     }
 
+
+//places letters and its frequencies in the ordered vectors, ordered by frequeny 
+    for( int i = 0; i < ptr->letters.size(); i++ ) {
+        if(ptr->frequency[i] > 0) {
+            ptr->orderedFrequency.push_back(ptr->frequency[i]);
+            ptr->orderedLetters.push_back(ptr->letters[i]);
+        }
+    }
+
+    inOrder(ptr->orderedLetters, ptr->orderedFrequency);
+
     return ptr;
 }
 
@@ -58,7 +86,6 @@ int main() {
 
     Data temp;
 
-    std::cout << "Enter lines of text: " << std::endl;
     while(std::getline(std::cin, line)) {
         if(line.empty()) {
             break;
@@ -89,12 +116,11 @@ int main() {
 //Prints the information from the child threads into STDOUT
     for( int i = 0; i < numLines; i++ ) {
         std::cout << "Message: " << lines[i].line << std::endl;
+        std::cout << std::endl;
         std::cout << "Alphabet: " << std::endl;
-        for( int j = 0; j < lines[i].letters.size(); j++) {
-            if(lines[i].frequency[j] > 0) {
-                std::cout << "Symbol: " << lines[i].letters[j];
-                std::cout << ", Frequency: " << lines[i].frequency[j] << std::endl;
-            }
+        for(int j = 0; j < lines[i].orderedLetters.size(); j++) {
+            std::cout << "Symbol: " << lines[i].orderedLetters[j];
+            std::cout << ", Frequency: " << lines[i].orderedFrequency[j] << std::endl;
         }
         std::cout<<std::endl;
 
@@ -103,10 +129,6 @@ int main() {
     if(tid!=nullptr){
         delete[] tid;
     }
-
-
-
-
 
     return 0;
 }
