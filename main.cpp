@@ -27,7 +27,7 @@ struct Data {
 void inOrder(std::vector<char>& orderedL, std::vector<int>& orderedF) {
     for( int i = 0; i < orderedF.size(); i++) {
         for( int j = i + 1; j < orderedF.size(); j++) {
-            if(orderedF[j] > orderedF[i]) {
+            if(orderedF[j] > orderedF[i] || (orderedF[j] == orderedF[i] && orderedL[j] > orderedL[i])) {
                 std::swap(orderedF[i], orderedF[j]);
                 std::swap(orderedL[i], orderedL[j]);
             }
@@ -39,6 +39,7 @@ void dec2bin(std::vector<float>& len, std::vector<float>& acc,  std::vector<std:
     for( int i = 0; i < acc.size(); i++ ) {
         float fraction = acc[i];
         std::string code = "";
+        int originalLength = len[i];
         while(len[i] > 0) {
             fraction = fraction * 2;
             int integer = static_cast<int>(fraction);
@@ -48,7 +49,7 @@ void dec2bin(std::vector<float>& len, std::vector<float>& acc,  std::vector<std:
             fraction = fraction - integer;
             len[i] = len[i] - 1;    
         }
-        while(code.length() < len[i]) {
+        while(code.length() < originalLength) {
             code = "0" + code;
         }
         cod.push_back(code);
