@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <pthread.h>
+#include <cmath>
 
 
 
@@ -17,6 +18,7 @@ struct Data {
     std::vector<int> orderedFrequency; //stores frequency of each letter in message, ordered by frequency 
     std::vector<float> probabilities;
     std::vector<float> accumulation;
+    std::vector<float> length;
 };
 
 
@@ -96,6 +98,12 @@ void* freq(void* void_ptr) {
         ptr->accumulation[i] = ptr->accumulation[i-1] + ptr->probabilities[i-1]; 
     }
 
+    ptr->length.resize(ptr->probabilities.size());
+
+//length of shannon code
+    for( int i = 0; i < ptr->probabilities.size(); i++ ) {
+        ptr->length[i] = std::ceil(log2(1/ptr->probabilities[i]));
+    }
 
 
     return ptr;
