@@ -16,6 +16,7 @@ struct Data {
     std::vector<char> orderedLetters; //stores each letter in message, ordered by frequency 
     std::vector<int> orderedFrequency; //stores frequency of each letter in message, ordered by frequency 
     std::vector<float> probabilities;
+    std::vector<float> accumulation;
 };
 
 
@@ -86,6 +87,15 @@ void* freq(void* void_ptr) {
     for( int i = 0; i < ptr->orderedFrequency.size(); i++ ) {
         ptr->probabilities[i] = static_cast<float>(ptr->orderedFrequency[i]) / sum;
     }
+
+//accumulation
+    ptr->accumulation.resize(ptr->probabilities.size());
+
+    ptr->accumulation[0] = 0.0; //first symbol is always 0
+    for( int i = 1; i < ptr->probabilities.size(); i++) {
+        ptr->accumulation[i] = ptr->accumulation[i-1] + ptr->probabilities[i-1]; 
+    }
+
 
 
     return ptr;
