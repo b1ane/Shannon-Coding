@@ -15,8 +15,7 @@ struct Data {
 
     std::vector<char> orderedLetters; //stores each letter in message, ordered by frequency 
     std::vector<int> orderedFrequency; //stores frequency of each letter in message, ordered by frequency 
-    std::vector<int> orderedShannon; //stores shannon code for each letter in message, ordered by frequency 
-
+    std::vector<float> probabilities;
 };
 
 
@@ -75,6 +74,19 @@ void* freq(void* void_ptr) {
     }
 
     inOrder(ptr->orderedLetters, ptr->orderedFrequency);
+
+//find probabilities
+    int sum = 0;
+    for( int i = 0; i < ptr->orderedFrequency.size(); i++ ) {
+        sum = sum + ptr->orderedFrequency[i];
+    }
+
+    ptr->probabilities.resize(ptr->orderedFrequency.size());
+
+    for( int i = 0; i < ptr->orderedFrequency.size(); i++ ) {
+        ptr->probabilities[i] = static_cast<float>(ptr->orderedFrequency[i]) / sum;
+    }
+
 
     return ptr;
 }
