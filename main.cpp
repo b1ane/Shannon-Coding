@@ -130,6 +130,20 @@ void* freq(void* void_ptr) {
 //actual shannon code for each symbol
     dec2bin(ptr->length, ptr->accumulation, ptr->code);
 
+//generate full shannon code for message
+    //string line = contains message 
+    for( int i = 0; i < ptr->line.size(); i++ ) {
+        char current = ptr->line[i];
+
+        //find code for each character
+        for( int j = 0; j < ptr->orderedLetters.size(); j++ ) {
+            if(ptr->orderedLetters[j] == current) {
+                ptr->encoded = ptr->encoded + ptr->code[j];
+                break; //break loop after appending code for symbol
+            }
+        }
+    }
+
 
     return ptr;
 }
@@ -179,7 +193,7 @@ int main() {
             std::cout << ", Shannon code: " << lines[i].code[j] << std::endl;
         }
         std::cout<<std::endl;
-
+        std::cout << "Encoded message: " << lines[i].encoded << std::endl;
     }
 
     if(tid!=nullptr){
