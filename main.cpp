@@ -19,6 +19,8 @@ struct Data {
     std::vector<float> probabilities;
     std::vector<float> accumulation;
     std::vector<float> length;
+
+    std::vector<std::string> code;
 };
 
 
@@ -30,6 +32,26 @@ void inOrder(std::vector<char>& orderedL, std::vector<int>& orderedF) {
                 std::swap(orderedL[i], orderedL[j]);
             }
         }
+    }
+}
+
+void dec2bin(std::vector<float>& len, std::vector<float>& acc,  std::vector<std::string>& cod) {
+    for( int i = 0; i < acc.size(); i++ ) {
+        float fraction = acc[i];
+        std::string code = "";
+        while(len[i] > 0) {
+            fraction = fraction * 2;
+            int integer = static_cast<int>(fraction);
+            
+            code = code + std::to_string(integer);  
+
+            fraction = fraction - integer;
+            len[i] = len[i] - 1;    
+        }
+        while(code.length() < len[i]) {
+            code = "0" + code;
+        }
+        cod.push_back(code);
     }
 }
 
@@ -105,6 +127,9 @@ void* freq(void* void_ptr) {
         ptr->length[i] = std::ceil(log2(1/ptr->probabilities[i]));
     }
 
+//actual shannon code for each symbol
+    dec2bin(ptr->length, ptr->accumulation, ptr->code);
+
 
     return ptr;
 }
@@ -150,7 +175,8 @@ int main() {
         std::cout << "Alphabet: " << std::endl;
         for(int j = 0; j < lines[i].orderedLetters.size(); j++) {
             std::cout << "Symbol: " << lines[i].orderedLetters[j];
-            std::cout << ", Frequency: " << lines[i].orderedFrequency[j] << std::endl;
+            std::cout << ", Frequency: " << lines[i].orderedFrequency[j];
+            std::cout << ", Shannon code: " << lines[i].code[j] << std::endl;
         }
         std::cout<<std::endl;
 
